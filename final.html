@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ECLearnix - Frontend</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: background 0.4s, color 0.4s;
+      background-color: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+    }
+    body.dark-mode {
+      background-color: #121212;
+      color: #eee;
+    }
+
+    nav {
+      background: linear-gradient(135deg, #e07a5f, #f4a261);
+      padding: 1rem 2rem;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    nav h1 {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+    
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    
+    nav ul li a, nav ul li button {
+      color: white;
+      font-weight: 500;
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+    
+    nav ul li a:hover, nav ul li button:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .user-status {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .user-status.logged-in {
+      background: rgba(46, 204, 113, 0.3);
+    }
+    
+    .user-status.logged-out {
+      background: rgba(231, 76, 60, 0.3);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .section {
+      display: none;
+      padding-top: 1rem;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    .section.active { 
+      display: block; 
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .welcome-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .welcome-header h2 {
+      font-size: 2.5rem;
+      color: #e07a5f;
+      margin-bottom: 0.5rem;
+    }
+    
+    .welcome-header p {
+      font-size: 1.2rem;
+      color: #666;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    body.dark-mode .welcome-header p {
+      color: #ccc;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .dark-toggle {
+      background: #333;
+      color: white;
+    }
+    
+    .dark-toggle:hover {
+      background: #555;
+    }
+    
+    .feature-btn {
+      background: linear-gradient(135deg, #f4a261, #e07a5f);
+      color: white;
+      margin: 0.5rem;
+      box-shadow: 0 4px 15px rgba(244, 162, 97, 0.3);
+    }
+    
+    .feature-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(244, 162, 97, 0.4);
+    }
+    
+    .logout-btn {
+      background: #e74c3c;
+      color: white;
+    }
+    
+    .logout-btn:hover {
+      background: #c0392b;
+    }
+
+    .feature-controls {
+      text-align: center;
+      margin: 2rem 0;
+    }
+    
+    .feature-box {
+      margin-top: 2rem;
+      padding: 2rem;
+      border: 1px solid #ddd;
+      border-radius: 15px;
+      display: none;
+      background: #fff;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .feature-box.show {
+      display: block;
+      animation: slideDown 0.3s ease-out;
+    }
+    
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    body.dark-mode .feature-box { 
+      background: #1e1e1e; 
+      border-color: #444; 
+    }
+    
+    .feature-box h3 {
+      color: #e07a5f;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+
+    .streak-info {
+      text-align: center;
+      margin: 1rem 0;
+    }
+    
+    .streak-info .streak-number {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #f4a261;
+      display: block;
+    }
+    
+    .streak-info .streak-text {
+      font-size: 1.1rem;
+      color: #666;
+      margin-top: 0.5rem;
+    }
+    
+    body.dark-mode .streak-info .streak-text {
+      color: #ccc;
+    }
+    
+    progress {
+      width: 100%;
+      height: 20px;
+      border-radius: 10px;
+      margin-top: 1rem;
+    }
+    
+    progress::-webkit-progress-bar {
+      background-color: #f0f0f0;
+      border-radius: 10px;
+    }
+    
+    progress::-webkit-progress-value {
+      background: linear-gradient(90deg, #f4a261, #e07a5f);
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    th, td {
+      padding: 15px;
+      text-align: left;
+    }
+    
+    th {
+      background: linear-gradient(135deg, #e07a5f, #f4a261);
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    td {
+      border-bottom: 1px solid #eee;
+      background: #fff;
+    }
+    
+    body.dark-mode td {
+      background: #2a2a2a;
+      border-bottom-color: #444;
+    }
+    
+    tr:hover td {
+      background: #f8f9fa;
+    }
+    
+    body.dark-mode tr:hover td {
+      background: #333;
+    }
+
+    .rank-badge {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      line-height: 30px;
+    }
+    
+    .rank-1 { background: #ffd700; color: #333; }
+    .rank-2 { background: #c0c0c0; color: #333; }
+    .rank-3 { background: #cd7f32; }
+    .rank-other { background: #95a5a6; }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    .team-member {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    
+    .team-member:hover {
+      transform: translateY(-5px);
+    }
+    
+    body.dark-mode .team-member {
+      background: #1e1e1e;
+    }
+    
+    .team-member.lead {
+      border: 2px solid #f4a261;
+    }
+    
+    .features-list {
+      margin-top: 1rem;
+    }
+    
+    .features-list li {
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      background: rgba(244, 162, 97, 0.1);
+      border-radius: 5px;
+    }
+    
+    body.dark-mode .features-list li {
+      background: rgba(244, 162, 97, 0.2);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      font-size: 14px;
+      color: #888;
+      background: #f8f9fa;
+      margin-top: 4rem;
+    }
+    
+    body.dark-mode .footer {
+      background: #1a1a1a;
+      color: #666;
+    }
+
+    .login-prompt {
+      text-align: center;
+      background: linear-gradient(135deg, #e07a5f, #f4a261);
+      color: white;
+      padding: 2rem;
+      border-radius: 15px;
+      margin: 2rem 0;
+    }
+    
+    .login-prompt h3 {
+      margin-bottom: 1rem;
+    }
+    
+    .login-prompt .btn {
+      background: white;
+      color: #e07a5f;
+      margin: 0.5rem;
+    }
+    
+    .login-prompt .btn:hover {
+      background: #f8f9fa;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+      }
+      
+      nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .welcome-header h2 {
+        font-size: 2rem;
+      }
+      
+      .container {
+        padding: 0 0.5rem;
+      }
+      
+      .feature-btn {
+        display: block;
+        margin: 0.5rem auto;
+        width: 80%;
+      }
+      
+      table {
+        font-size: 0.9rem;
+      }
+      
+      th, td {
+        padding: 10px 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <img id="logo-image" src="logo.png" alt="Logo with EC-LEARNIX text" />
+    <ul>
+      <li><a href="#" onclick="showSection('home')">Home</a></li>
+      <li><a href="#" onclick="showSection('about')">About Team</a></li>
+      <li><a href="#" onclick="showSection('profile')">Profile</a></li>
+      <li id="auth-link"><a href="login.html">Login</a></li>
+      <li><button class="btn dark-toggle" onclick="toggleMode()">🌗 Mode</button></li>
+      <li id="logout-section" style="display: none;">
+       <button class="btn dark-toggle" onclick="toggleMode()">🌗 Mode</button>
+      </li>
+    </ul>
+    
+  </nav>
+
+  
+
+    <section id="home" class="section active">
+      <div class="welcome-header">
+        <h2>Welcome to ECLearnix </h2>
+        <p>Engage in daily learning, track your progress, and rise on the leaderboard!</p>
+      </div>
+      
+     <style>
+  .feature-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-left: 2rem;
+    margin-top: 2rem;
+  }
+</style>
+
+<div style="display: flex;">
+  <!-- Left Side Buttons -->
+  <div class="feature-controls">
+    <button class="btn feature-btn" onclick="toggleBox('streak-box')">🔥 My Streak</button>
+    <button class="btn feature-btn" onclick="toggleBox('leaderboard-box')">🏆 Leaderboard</button>
+    <button class="btn feature-btn" onclick="toggleBox('progress-box')">📊 Progress</button>
+  </div>
+
+  <!-- Right Side Content -->
+  <div style="margin-left: 3rem;">
+    <div id="streak-box" class="feature-box">
+      <h3>Your Learning Streak 🔥</h3>
+      <div class="streak-info">
+        <span class="streak-number">6</span>
+        <div class="streak-text">Days in a row! You're doing great!</div>
+      </div>
+      <progress value="6" max="30"></progress>
+      <p style="text-align: center; margin-top: 1rem; color: #666;">
+        Goal: 30 days | Keep the momentum going! 💪
+      </p>
+    </div>
+
+    <div id="leaderboard-box" class="feature-box">
+      <h3>Top Learners 🏆</h3>
+      <table>
+        <thead>
+          <tr><th>Rank</th><th>Name</th><th>Points</th><th>Streak</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="rank-badge rank-1">1</span></td>
+            <td><strong>Adarsh Varma</strong></td>
+            <td>980</td>
+            <td>12 days 🔥</td>
+          </tr>
+          <tr>
+            <td><span class="rank-badge rank-2">2</span></td>
+            <td><strong>Devaguru V</strong></td>
+            <td>960</td>
+            <td>10 days</td>
+          </tr>
+          <tr>
+            <td><span class="rank-badge rank-3">3</span></td>
+            <td><strong>Sharan T</strong></td>
+            <td>940</td>
+            <td>8 days</td>
+          </tr>
+          <tr>
+            <td><span class="rank-badge rank-other">4</span></td>
+            <td><strong>Ramkumar S</strong></td>
+            <td>930</td>
+            <td>7 days</td>
+          </tr>
+          <tr>
+            <td><span class="rank-badge rank-other">5</span></td>
+            <td><strong>Bhuvan Shankar</strong></td>
+            <td>920</td>
+            <td>6 days</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="progress-box" class="feature-box">
+      <h3>Your Learning Progress 📊</h3>
+      <div style="margin: 1rem 0;">
+        <p><strong>Courses Completed:</strong> 3/10</p>
+        <progress value="3" max="10" style="margin: 0.5rem 0;"></progress>
+      </div>
+      <div style="margin: 1rem 0;">
+        <p><strong>Weekly Goal:</strong> 5/7 sessions</p>
+        <progress value="5" max="7" style="margin: 0.5rem 0;"></progress>
+      </div>
+      <div style="margin: 1rem 0;">
+        <p><strong>Points This Month:</strong> 920/1000</p>
+        <progress value="920" max="1000" style="margin: 0.5rem 0;"></progress>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <section id="about" class="section">
+      <div class="welcome-header">
+        <h2>Meet Team Gladiator 👥</h2>
+        <p>We are redesigning ECLearnix for an engaging and smart learning future.</p>
+      </div>
+      
+      <div class="team-grid">
+        <div class="team-member lead">
+          <h4> Bhuvan Shankar P</h4>
+          <p><strong>Team Lead</strong></p>
+          <p>Leading the vision for next-gen learning experiences</p>
+        </div>
+        <div class="team-member">
+          <h4> Devaguru V</h4>
+          <p><strong>Full Stack Developer</strong></p>
+          <p>Building robust and scalable learning platforms</p>
+        </div>
+        <div class="team-member">
+          <h4> Adarsh Varma</h4>
+          <p><strong>Frontend Specialist</strong></p>
+          <p>Creating intuitive and engaging user interfaces</p>
+        </div>
+        <div class="team-member">
+          <h4> Ramkumar S</h4>
+          <p><strong>Backend Engineer</strong></p>
+          <p>Developing powerful APIs and data systems</p>
+        </div>
+        <div class="team-member">
+          <h4> Sharan T</h4>
+          <p><strong>DevOps & QA</strong></p>
+          <p>Ensuring quality and seamless deployment</p>
+        </div>
+      </div>
+      
+      <div style="margin-top: 3rem;">
+        <h3> Features We're Building</h3>
+        <ul class="features-list">
+          <li> Advanced streak system with rewards and achievements</li>
+          <li> Dynamic leaderboards with multiple categories</li>
+          <li> AI-powered personalized learning recommendations</li>
+          <li> Interactive student forums and peer-to-peer learning</li>
+          <li> Comprehensive analytics and progress tracking</li>
+          <li> Gamification elements to boost engagement</li>
+          <li> Mobile-first responsive design</li>
+          <li> Secure authentication and data protection</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <div class="footer">
+    <p>&copy; 2025  ECLearnix Hackathon </p>
+    <p>Built with ❤️ for the future of education</p>
+  </div>
+
+  <script>
+    window.addEventListener('load', function() {
+      checkAuthStatus();
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('loggedIn') === 'true') {
+        showWelcomeMessage();
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    });
+
+    function checkAuthStatus() {
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      const loginPrompt = document.getElementById('login-prompt');
+      const authLink = document.getElementById('auth-link');
+      const logoutSection = document.getElementById('logout-section');
+      const userStatus = document.getElementById('user-status');
+      const statusText = document.getElementById('status-text');
+
+      if (isLoggedIn) {
+        loginPrompt.style.display = 'none';
+        authLink.style.display = 'none';
+        logoutSection.style.display = 'block';
+        userStatus.className = 'user-status logged-in';
+        statusText.textContent = 'Logged In';
+        document.querySelectorAll('.feature-box').forEach(box => {
+          box.style.opacity = '1';
+        });
+      } else {
+        loginPrompt.style.display = 'block';
+        authLink.style.display = 'block';
+        logoutSection.style.display = 'none';
+        userStatus.className = 'user-status logged-out';
+        statusText.textContent = 'Not Logged In';
+        document.querySelectorAll('.feature-box').forEach(box => {
+          box.style.opacity = '0.5';
+        });
+      }
+    }
+
+    function showWelcomeMessage() {
+      const welcomeMsg = document.createElement('div');
+      welcomeMsg.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        z-index: 10000;
+        animation: slideInRight 0.5s ease-out;
+      `;
+      welcomeMsg.innerHTML = '<strong>🎉 Welcome back!</strong><br>You have successfully logged in!';
+      
+      document.body.appendChild(welcomeMsg);
+      
+      setTimeout(() => {
+        welcomeMsg.remove();
+      }, 4000);
+    }
+
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function toggleBox(id) {
+      const el = document.getElementById(id);
+      const isVisible = el.classList.contains('show');
+      
+      document.querySelectorAll('.feature-box').forEach(box => {
+        box.classList.remove('show');
+      });
+    
+      if (!isVisible) {
+        el.classList.add('show');
+      }
+    }
+
+    function toggleMode() {
+      document.body.classList.toggle('dark-mode');
+      
+      const isDark = document.body.classList.contains('dark-mode');
+      localStorage.setItem('darkMode', isDark);
+    }
+
+    function handleLogout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('loginTime');
+
+        const logoutMsg = document.createElement('div');
+        logoutMsg.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: linear-gradient(135deg, #e74c3c, #c0392b);
+          color: white;
+          padding: 1rem 1.5rem;
+          border-radius: 10px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+          z-index: 10000;
+        `;
+        logoutMsg.innerHTML = '<strong>👋 Logged out successfully!</strong>';
+        document.body.appendChild(logoutMsg);
+        
+        setTimeout(() => {
+          logoutMsg.remove();
+          checkAuthStatus();
+        }, 2000);
+      }
+    }
+
+    window.addEventListener('load', function() {
+      const isDark = localStorage.getItem('darkMode') === 'true';
+      if (isDark) {
+        document.body.classList.add('dark-mode');
+      }
+    });
+
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>
